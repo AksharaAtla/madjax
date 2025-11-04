@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Apple Sign-In Redirect</title>
+    <script>
+      // Run when page loads
+      window.onload = function () {
+        // Parse query parameters (code, id_token, state, etc.)
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get("code");
+        const idToken = params.get("id_token");
+        const state = params.get("state");
+        const error = params.get("error");
+
+        if (error) {
+          document.body.innerHTML = `<h2>Sign in failed: ${error}</h2>`;
+          return;
+        }
+
+        if (code || idToken) {
+          // ✅ Optionally: send these to your backend for token validation
+          // Example: await fetch('/verify-apple', { method: 'POST', body: JSON.stringify({ code, idToken }) })
+
+          // Then redirect back to your app (Android/iOS)
+          const redirectURL = `madjax://signin-success?code=${encodeURIComponent(code || "")}&id_token=${encodeURIComponent(idToken || "")}&state=${encodeURIComponent(state || "")}`;
+          window.location.href = redirectURL;
+
+          // Also show success text for browsers that don’t auto-redirect
+          document.body.innerHTML = `<h2>Login successful. Redirecting...</h2>`;
+        } else {
+          document.body.innerHTML = "<h2>No credentials received.</h2>";
+        }
+      };
+    </script>
+  </head>
+  <body>
+    <h2>Processing Sign-In...</h2>
+  </body>
+</html>
