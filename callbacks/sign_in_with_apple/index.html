@@ -1,40 +1,34 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Apple Sign-In Redirect</title>
-    <script>
-      // Run when page loads
-      window.onload = function () {
-        // Parse query parameters (code, id_token, state, etc.)
-        const params = new URLSearchParams(window.location.search);
-        const code = params.get("code");
-        const idToken = params.get("id_token");
-        const state = params.get("state");
-        const error = params.get("error");
+<head>
+  <meta charset="utf-8" />
+  <title>Apple Sign-In Redirect</title>
+  <script>
+    window.onload = function () {
+      const search = window.location.search || window.location.hash.substring(1);
+      const params = new URLSearchParams(search);
 
-        if (error) {
-          document.body.innerHTML = `<h2>Sign in failed: ${error}</h2>`;
-          return;
-        }
+      const code = params.get("code");
+      const idToken = params.get("id_token");
+      const state = params.get("state");
+      const error = params.get("error");
 
-        if (code || idToken) {
-          // ✅ Optionally: send these to your backend for token validation
-          // Example: await fetch('/verify-apple', { method: 'POST', body: JSON.stringify({ code, idToken }) })
+      if (error) {
+        document.body.innerHTML = `<h2>Sign in failed: ${error}</h2>`;
+        return;
+      }
 
-          // Then redirect back to your app (Android/iOS)
-          const redirectURL = `madjax://signin-success?code=${encodeURIComponent(code || "")}&id_token=${encodeURIComponent(idToken || "")}&state=${encodeURIComponent(state || "")}`;
-          window.location.href = redirectURL;
-
-          // Also show success text for browsers that don’t auto-redirect
-          document.body.innerHTML = `<h2>Login successful. Redirecting...</h2>`;
-        } else {
-          document.body.innerHTML = "<h2>No credentials received.</h2>";
-        }
-      };
-    </script>
-  </head>
-  <body>
-    <h2>Processing Sign-In...</h2>
-  </body>
+      if (code || idToken) {
+        const redirectURL = `madjax://signin-success?code=${encodeURIComponent(code || "")}&id_token=${encodeURIComponent(idToken || "")}&state=${encodeURIComponent(state || "")}`;
+        window.location.href = redirectURL;
+        document.body.innerHTML = `<h2>Login successful. Redirecting...</h2>`;
+      } else {
+        document.body.innerHTML = "<h2>No credentials received.</h2>";
+      }
+    };
+  </script>
+</head>
+<body>
+  <h2>Processing Sign-In...</h2>
+</body>
 </html>
